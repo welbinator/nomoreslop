@@ -1,0 +1,246 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const tools = [
+  { name: "PHPCS", description: "WordPress/PHP coding standards enforcement.", catches: "nonces, escaping, sanitization, prepared queries", misses: "logic-level issues", platforms: "PHP/WordPress", free: "Yes", link: "https://github.com/squizlabs/PHP_CodeSniffer", tags: ["php", "wordpress", "security"] },
+  { name: "PHPStan", description: "PHP static analysis for type safety.", catches: "type mismatches, undefined vars, incorrect return types", misses: "runtime/logic issues", platforms: "PHP", free: "Yes", link: "https://phpstan.org", tags: ["php", "security"] },
+  { name: "Snyk", description: "Dependency CVE scanning.", catches: "known CVEs in composer/npm/pip packages", misses: "your own code", platforms: "composer, npm, pip", free: "Yes (free tier)", link: "https://snyk.io", tags: ["php", "javascript", "typescript", "dependencies", "security", "github"] },
+  { name: "Socket", description: "Supply chain security for npm/composer.", catches: "malicious package behavior before CVEs exist", misses: "your own code logic", platforms: "npm, composer", free: "Yes (free tier)", link: "https://socket.dev", tags: ["php", "javascript", "typescript", "dependencies", "security", "github"] },
+  { name: "SonarCloud", description: "Broad multi-language static analysis.", catches: "code quality issues across JS/TS/Java/PHP. Can be noisy.", misses: "design-level decisions", platforms: "Multi-language", free: "Free for public repos", link: "https://sonarcloud.io", tags: ["php", "javascript", "typescript", "security", "github", "multi-language"] },
+  { name: "Codacy", description: "Automated code review with GitHub PR comments.", catches: "code quality across multiple languages", misses: "logic-level security issues", platforms: "Multi-language", free: "Free for open source", link: "https://codacy.com", tags: ["php", "javascript", "typescript", "security", "github", "multi-language"] },
+  { name: "DeepSource", description: "Low false-positive code quality.", catches: "code quality issues, strong on JS/TS/Python/Go", misses: "domain-specific security patterns", platforms: "JS/TS/Python/Go", free: "Free for open source", link: "https://deepsource.io", tags: ["javascript", "typescript", "security", "github"] },
+  { name: "Impeccable", description: "Design anti-pattern scanner for AI-generated frontends.", catches: "purple gradients, overused fonts, nested cards, low contrast, AI color palettes \u2014 25+ deterministic checks", misses: "logic and security issues", platforms: "HTML/CSS/JSX/TSX/Vue/Svelte", free: "Free CLI + Chrome extension", link: "https://impeccable.style", tags: ["javascript", "typescript", "css"] },
+  { name: "Sentry", description: "Runtime error monitoring and performance tracking.", catches: "unhandled exceptions, JS crashes, slow API responses, error spikes in production", misses: "anything before runtime \u2014 static analysis, dependency CVEs, design-level security decisions", platforms: "JS/TS/React/Next.js/Astro/Node.js/PHP/Python and more", free: "Free tier (5k errors/month)", link: "https://sentry.io", tags: ["php", "javascript", "typescript", "multi-language", "github"] },
+  { name: "jscpd", description: "Copy/paste detector for source code. Finds duplicated blocks across your codebase.", catches: "duplicated logic, repeated code blocks \u2014 especially common in AI-generated code where patterns get repeated across files", misses: "security issues, logic bugs, anything beyond structural duplication", platforms: "150+ languages including JS/TS/PHP/Python/Go/Ruby", free: "Free", link: "https://jscpd.dev", tags: ["php", "javascript", "typescript", "multi-language"] },
+  { name: "Knip", description: "Finds unused dependencies, exports, and files in JS/TS projects.", catches: "unused npm packages, dead code exports, files never imported, unused TypeScript types \u2014 common in AI-generated code", misses: "security issues, runtime errors, logic bugs", platforms: "JavaScript/TypeScript \u2014 100+ framework plugins including Astro, Next.js, React", free: "Free", link: "https://knip.dev", tags: ["javascript", "typescript", "dependencies"] },
+  { name: "Fallow", description: "Codebase intelligence for TypeScript and JavaScript. Static analysis plus optional runtime tracking.", catches: "unused code, duplication, complexity hotspots, architecture drift, feature-flag branches \u2014 and with the runtime layer, what code was never actually called in production", misses: "security vulnerabilities, logic bugs", platforms: "TypeScript/JavaScript", free: "Free (static layer, MIT-licensed) \u2014 paid runtime layer available", link: "https://fallow.tools", tags: ["javascript", "typescript"] },
+  { name: "Project Wallace", description: "CSS analytics that gives you an aerial view of your entire stylesheet.", catches: "duplicate colors, specificity wars, competing font stacks, design token drift, bloated selectors \u2014 all the CSS chaos AI generates without realizing it", misses: "JS/logic issues, security vulnerabilities", platforms: "CSS \u2014 paste a URL or raw CSS", free: "Free tier available", link: "https://www.projectwallace.com", tags: ["css"] },
+  { name: "Marko", description: "A grumpy senior code reviewer for Claude Code and Codex. Gives a one-word verdict (catastrophe/bad/mediocre/ok), lists concrete file:line gripes, and never suggests fixes or softens the review.", catches: "concurrency bugs, type confusion, PII leaks in logs, unhandled async — any issue a senior dev would flag on sight", misses: "anything requiring runtime context or domain knowledge — it reviews the diff, not the system", platforms: "Claude Code / Codex (agent skill)", free: "Free", link: "https://github.com/julianmemberstack/marko", tags: ["javascript", "typescript", "php", "multi-language", "github"] },
+];
+---
+
+<Layout 
+  title="Automated Code Quality Tools — NoMoreSlop" 
+  description="A curated list of static analysis and dependency scanning tools for AI-assisted development, with honest notes on what each one misses."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <p class="section-label">// AUTOMATED TOOLS</p>
+    <h1 class="mb-8">Automated checks are necessary. They are not sufficient.</h1>
+    <p class="text-xl mb-10" style="color: var(--text-secondary); line-height: 1.7; max-width: 48rem;">These tools together catch roughly 30% of the real problems in AI-generated code. Add them all. Then get a human to check the rest.</p>
+
+    <!-- Filter chips -->
+    <div class="flex gap-2 flex-wrap mb-10">
+      <button data-tag="" class="filter-chip active">All</button>
+      <button data-tag="php" class="filter-chip">PHP</button>
+      <button data-tag="javascript" class="filter-chip">JavaScript</button>
+      <button data-tag="typescript" class="filter-chip">TypeScript</button>
+      <button data-tag="css" class="filter-chip">CSS</button>
+      <button data-tag="dependencies" class="filter-chip">Dependencies</button>
+      <button data-tag="security" class="filter-chip">Security</button>
+      <button data-tag="github" class="filter-chip">GitHub</button>
+      <button data-tag="multi-language" class="filter-chip">Multi-language</button>
+    </div>
+
+    <!-- Tool Cards -->
+    <div id="tools-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;">
+      {tools.map((tool, index) => (
+        <article class="card animate-fadein tool-card" data-tags={tool.tags.join(',')} style={`transition-delay: ${index * 0.05}s; min-width: 0; flex-direction: column; cursor: default;`}>
+          <div class="flex items-start justify-between mb-3">
+            <button
+              class="tool-open font-display text-2xl text-left hover:opacity-70 transition-opacity"
+              style="color: var(--accent); background: none; border: none; padding: 0; cursor: pointer; font-family: var(--font-display); font-size: 1.5rem;"
+              data-name={tool.name}
+              data-description={tool.description}
+              data-catches={tool.catches}
+              data-misses={tool.misses}
+              data-platforms={tool.platforms}
+              data-free={tool.free}
+              data-link={tool.link}
+              data-tags={tool.tags.join(', ')}
+            >
+              {tool.name}
+            </button>
+            <a
+              href={tool.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm hover:text-accent transition-colors"
+              style="font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; white-space: nowrap; margin-left: 12px; color: var(--text-secondary);"
+            >
+              Visit →
+            </a>
+          </div>
+          <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">{tool.description}</p>
+          <div class="mt-auto pt-4 flex flex-wrap gap-1">
+            {tool.tags.map(tag => (
+              <span style="font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); background: var(--bg-secondary); border: 1px solid var(--border-subtle); padding: 2px 7px;">{tag}</span>
+            ))}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <!-- Tool Modal -->
+    <div id="tool-modal" style="display:none; position:fixed; inset:0; z-index:1000; align-items:center; justify-content:center; padding:24px;">
+      <button id="modal-backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.7); border:none; cursor:pointer; width:100%; height:100%;"></button>
+      <div id="modal-box" style="position:relative; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); max-width:640px; width:100%; max-height:85vh; overflow-y:auto; padding:40px;">
+        <button id="modal-close" style="position:absolute; top:16px; right:20px; background:none; border:none; cursor:pointer; font-family:var(--font-mono); font-size:1.2rem; color:var(--text-secondary); line-height:1;" aria-label="Close">✕</button>
+        <h2 id="modal-name" class="font-display" style="font-size:2.5rem; color:var(--accent); margin-bottom:8px;"></h2>
+        <a id="modal-link" href="#" target="_blank" rel="noopener noreferrer" style="font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-secondary); text-decoration:none; display:inline-block; margin-bottom:24px;">Visit site →</a>
+        <p id="modal-description" style="color:var(--text-secondary); line-height:1.7; margin-bottom:32px; font-size:1rem;"></p>
+        <div style="display:flex; flex-direction:column; gap:20px; font-family:var(--font-mono); font-size:0.85rem;">
+          <div>
+            <div style="color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; font-size:0.72rem; margin-bottom:6px;">Catches</div>
+            <div id="modal-catches" style="color:var(--text-secondary); line-height:1.6;"></div>
+          </div>
+          <div>
+            <div style="color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; font-size:0.72rem; margin-bottom:6px;">Misses</div>
+            <div id="modal-misses" style="color:var(--text-secondary); line-height:1.6;"></div>
+          </div>
+          <div>
+            <div style="color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; font-size:0.72rem; margin-bottom:6px;">Platforms</div>
+            <div id="modal-platforms" style="color:var(--text-secondary); line-height:1.6;"></div>
+          </div>
+          <div>
+            <div style="color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; font-size:0.72rem; margin-bottom:6px;">Free?</div>
+            <div id="modal-free" style="color:var(--text-secondary); line-height:1.6;"></div>
+          </div>
+          <div>
+            <div style="color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; font-size:0.72rem; margin-bottom:6px;">Tags</div>
+            <div id="modal-tags" style="color:var(--text-secondary); line-height:1.6;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Callout Box -->
+    <div class="mt-16 p-8" style="background: var(--bg-card); border-left: 3px solid var(--accent); border-right: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+      <h3 class="font-display text-3xl mb-4">WHAT NONE OF THEM CATCH</h3>
+      <p class="mb-6" style="color: var(--text-secondary); line-height: 1.7;">No automated tool catches design-level security decisions. Rate limiting defaulting to off. Unauthenticated encryption. SSRF through an admin-configured URL. These require a human who understands the domain.</p>
+      <a href="/reviews" class="inline-block" style="color: var(--accent); font-weight: 600; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.875rem;">Find a human reviewer →</a>
+    </div>
+
+    <!-- Recommended Stacks -->
+    <section class="mt-16 p-8" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle);">
+      <h3 class="font-display text-3xl" style="margin-bottom: 2.5rem;">RECOMMENDED STACKS</h3>
+      <div class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h4 class="font-display text-xl mb-3">WORDPRESS PLUGIN:</h4>
+            <p class="terminal p-4 text-sm">PHPCS + PHPStan + Snyk + Socket + SonarCloud or Codacy</p>
+          </div>
+          <a href="/skills/wordpress-plugin-checks.md" download class="btn text-sm flex-shrink-0" style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:0.5rem; padding-top:0.75rem; padding-bottom:0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span class="hidden sm:inline">DOWNLOAD</span> SKILL
+          </a>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h4 class="font-display text-xl mb-3">NODE.JS:</h4>
+            <p class="terminal p-4 text-sm">ESLint + Snyk + Socket + SonarCloud or DeepSource</p>
+          </div>
+          <a href="/skills/nodejs-checks.md" download class="btn text-sm flex-shrink-0" style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:0.5rem; padding-top:0.75rem; padding-bottom:0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span class="hidden sm:inline">DOWNLOAD</span> SKILL
+          </a>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h4 class="font-display text-xl mb-3">NEXT.JS:</h4>
+            <p class="terminal p-4 text-sm">ESLint (built-in) + TypeScript strict + Snyk + Socket + SonarCloud or DeepSource</p>
+          </div>
+          <a href="/skills/nextjs-checks.md" download class="btn text-sm flex-shrink-0" style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:0.5rem; padding-top:0.75rem; padding-bottom:0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span class="hidden sm:inline">DOWNLOAD</span> SKILL
+          </a>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h4 class="font-display text-xl mb-3">ASTRO:</h4>
+            <p class="terminal p-4 text-sm">ESLint + Snyk + Socket + DeepSource or SonarCloud</p>
+          </div>
+          <a href="/skills/astro-checks.md" download class="btn text-sm flex-shrink-0" style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:0.5rem; padding-top:0.75rem; padding-bottom:0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span class="hidden sm:inline">DOWNLOAD</span> SKILL
+          </a>
+        </div>
+        <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div class="flex-1">
+            <h4 class="font-display text-xl mb-3">ALL PROJECTS (BASELINE):</h4>
+            <p class="terminal p-4 text-sm">At minimum, one dependency scanner and one static analyzer</p>
+          </div>
+          <a href="/skills/universal-checks.md" download class="btn text-sm flex-shrink-0" style="display:inline-flex; flex-direction:row; flex-wrap:nowrap; align-items:center; gap:0.5rem; padding-top:0.75rem; padding-bottom:0.75rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+            <span class="hidden sm:inline">DOWNLOAD</span> SKILL
+          </a>
+        </div>
+      </div>
+    </section>
+  </section>
+  <style is:global>
+    .filter-chip {
+      padding: 0.4rem 0.9rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-chip.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+    .tool-card.hidden { display: none; }
+    .tool-card { display: flex; }
+  </style>
+
+  <script>
+    var activeTag = '';
+    document.querySelectorAll('[data-tag]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        activeTag = btn.dataset.tag || '';
+        document.querySelectorAll('[data-tag]').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.tool-card').forEach(function(card) {
+          if (!activeTag) {
+            card.classList.remove('hidden');
+          } else {
+            var tags = (card.dataset.tags || '').split(',');
+            card.classList.toggle('hidden', !tags.includes(activeTag));
+          }
+        });
+      });
+    });
+
+    // Modal logic
+    var modal = document.getElementById('tool-modal');
+    function openModal(btn) {
+      document.getElementById('modal-name').textContent = btn.dataset.name;
+      document.getElementById('modal-description').textContent = btn.dataset.description;
+      document.getElementById('modal-catches').textContent = btn.dataset.catches;
+      document.getElementById('modal-misses').textContent = btn.dataset.misses;
+      document.getElementById('modal-platforms').textContent = btn.dataset.platforms;
+      document.getElementById('modal-free').textContent = btn.dataset.free;
+      document.getElementById('modal-tags').textContent = btn.dataset.tags;
+      var link = document.getElementById('modal-link');
+      link.href = btn.dataset.link;
+      link.textContent = btn.dataset.link.replace('https://', '') + ' →';
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.tool-open').forEach(function(btn) {
+      btn.addEventListener('click', function() { openModal(btn); });
+    });
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeModal();
+    });
+  </script>
+</Layout>

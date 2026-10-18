@@ -1,0 +1,406 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { skills } from '../data/skills';
+
+const skillsJSON = JSON.stringify(skills);
+---
+
+<Layout 
+  title="Agent Skills Directory — NoMoreSlop" 
+  description="Curated AI coding assistant skills that enforce security patterns, coding standards, and best practices automatically."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <p class="section-label">// AGENT SKILLS</p>
+    <h1 class="mb-8">Skills that tell your AI what not to do.</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7; max-width: 52rem;">
+      Agent skills are configuration files that give AI coding assistants domain-specific knowledge — coding standards, security patterns, project conventions. Instead of explaining the same requirements in every session, you write it once as a skill and the AI follows it automatically.
+    </p>
+
+    <!-- Search Bar -->
+    <div class="mb-8">
+      <input 
+        type="text" 
+        id="skill-search" 
+        placeholder="Search skills — e.g. wordpress, node.js, security..."
+        class="search-input"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="flex gap-2 mt-4 flex-wrap">
+        <button data-category="WordPress" class="filter-chip">WordPress</button>
+        <button data-category="Node.js" class="filter-chip">Node.js</button>
+        <button data-category="Astro" class="filter-chip">Astro</button>
+        <button data-category="Security" class="filter-chip">Security</button>
+        <button data-category="Frontend Design" class="filter-chip">Frontend Design</button>
+        <button data-category="General" class="filter-chip">General</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="mb-12">
+      <p class="section-label mb-6">// YOUR DIRECTORY</p>
+      <div id="local-results" class="space-y-6"></div>
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="mt-16 p-8 text-center" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+      <p class="font-display text-3xl mb-3" style="color: var(--text-primary);">KNOW A SKILL WORTH INCLUDING?</p>
+      <p class="mb-6" style="color: var(--text-secondary);">Submit a link and we&apos;ll review it for the directory.</p>
+      <button id="submit-skill-btn" class="btn btn-primary">Submit a Skill</button>
+    </div>
+
+    <!-- Skill Detail Modal -->
+    <div id="skill-detail-modal" style="display:none; position:fixed; inset:0; z-index:300; align-items:center; justify-content:center; padding:24px;">
+      <button id="skill-detail-backdrop" aria-label="Close" style="position:absolute; inset:0; background:rgba(0,0,0,0.7); cursor:pointer; border:none; width:100%; height:100%;"></button>
+      <div style="position:relative; z-index:301; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); max-width:600px; width:100%; max-height:85vh; overflow-y:auto; padding:40px;">
+        <button id="skill-detail-close" aria-label="Close" style="position:absolute; top:16px; right:20px; background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--text-secondary); line-height:1;">✕</button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+          <span id="sd-source" class="badge badge-source"></span>
+          <span id="sd-category" class="badge badge-category"></span>
+        </div>
+        <h2 id="sd-name" class="skill-name" style="font-size:2.5rem; margin-bottom:20px;"></h2>
+        <p id="sd-description" style="color:var(--text-secondary); line-height:1.7; margin-bottom:28px; font-size:1rem;"></p>
+        <div id="sd-prevents-wrap" style="margin-bottom:24px;">
+          <div style="font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:8px;">Prevents</div>
+          <div id="sd-prevents" style="font-family:var(--font-mono); font-size:0.85rem; color:var(--text-secondary); line-height:1.6; padding:12px 16px; background:rgba(245,158,11,0.05); border-left:2px solid var(--accent);"></div>
+        </div>
+        <div id="sd-tags-wrap" style="margin-bottom:28px;">
+          <div style="font-family:var(--font-mono); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:8px;">Tags</div>
+          <div id="sd-tags" class="skill-tags"></div>
+        </div>
+        <a id="sd-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">View Skill →</a>
+      </div>
+    </div>
+
+    <!-- Submit Modal -->
+    <div id="skill-modal" style="display:none; position:fixed; inset:0; z-index:200; align-items:center; justify-content:center; padding:1rem;">
+      <!-- Backdrop -->
+      <button id="modal-backdrop" aria-label="Close" style="position:absolute; inset:0; background:rgba(0,0,0,0.7); cursor:default; border:none;"></button>
+      <!-- Modal box -->
+      <div style="position:relative; z-index:201; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); padding:2.5rem; max-width:480px; width:100%;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem;">
+          <h2 class="font-display text-3xl">SUBMIT A SKILL</h2>
+          <button id="modal-close" aria-label="Close" style="background:none; border:none; color:var(--text-secondary); font-size:1.5rem; cursor:pointer; line-height:1; padding:0;">&times;</button>
+        </div>
+        <form id="skill-form">
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Skill URL *</label>
+            <input type="url" id="skill-url" required placeholder="https://clawhub.ai/user/skill-name" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Skill Name *</label>
+            <input type="text" id="skill-name-input" required placeholder="e.g. wordpress-pro" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Why should it be included?</label>
+            <textarea id="skill-reason" rows="3" placeholder="What problems does it prevent? Who is it for?" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; resize:vertical; box-sizing:border-box;"></textarea>
+          </div>
+          <div style="margin-bottom:2rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Your email (optional)</label>
+            <input type="email" id="skill-email" placeholder="you@example.com" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">SEND SUBMISSION</button>
+        </form>
+        <div id="skill-form-success" style="display:none; text-align:center; padding:2rem 0;">
+          <p class="font-display text-2xl mb-3" style="color:var(--accent);">SUBMITTED</p>
+          <p style="color:var(--text-secondary); font-family:var(--font-mono); font-size:0.875rem;">Thanks — we&apos;ll take a look and be in touch if it makes the cut.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style is:global>
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+
+    .filter-chip {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-chip.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+
+    #local-results {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid transparent;
+      padding: 2rem;
+      transition: border-color 0.2s, border-left-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .skill-card:hover { border-color: var(--border-subtle); border-left-color: var(--accent); }
+
+    .skill-name-btn:hover .skill-name { color: var(--accent); }
+    .skill-name-btn:hover { opacity: 0.8; }
+
+    .skill-name {
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .skill-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.2rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: 1px solid;
+    }
+    .badge-source { border-color: var(--accent); color: var(--accent); }
+    .badge-category { border-color: var(--border-subtle); color: var(--text-secondary); }
+
+    .skill-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .skill-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      padding: 0.2rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--text-secondary);
+      border: 1px solid rgba(245, 158, 11, 0.2);
+    }
+
+    .skill-prevents {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.75rem 1rem;
+      background: rgba(245, 158, 11, 0.05);
+      border-left: 2px solid var(--accent);
+    }
+    .prevents-label { color: var(--accent); }
+    .prevents-text { color: var(--text-secondary); }
+
+    .skill-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
+    }
+    .skill-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .skill-link:hover { color: var(--accent); }
+
+    .no-results {
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      padding: 2rem;
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      grid-column: 1 / -1;
+    }
+  </style>
+
+  <script define:vars={{ skillsJSON }}>
+    const LOCAL_SKILLS = JSON.parse(skillsJSON);
+    let searchTimeout = null;
+    let currentQuery = '';
+    let activeCategory = null;
+
+    const searchInput = document.getElementById('skill-search');
+    const localResults = document.getElementById('local-results');
+
+    function renderSkillCard(skill) {
+      const prevents = skill.prevents && skill.prevents.length > 0 ? skill.prevents.join(', ') : null;
+      const tags = skill.tags && skill.tags.length > 0
+        ? skill.tags.map(t => '<span class="tag">' + t + '</span>').join('')
+        : '';
+      // Encode data for the modal button
+      const encoded = encodeURIComponent(JSON.stringify(skill));
+      return '<article class="skill-card animate-fadein">'
+        + '<button class="skill-name-btn" onclick="openSkillDetail(\'' + encoded + '\')" style="background:none;border:none;padding:0;cursor:pointer;text-align:left;"><h2 class="skill-name" style="pointer-events:none;">' + skill.name + '</h2></button>'
+        + '<div class="skill-meta"><span class="badge badge-source">' + skill.source.toUpperCase() + '</span><span class="badge badge-category">' + skill.category + '</span></div>'
+        + '<p class="skill-description">' + skill.description + '</p>'
+        + (tags ? '<div class="skill-tags">' + tags + '</div>' : '')
+        + '</article>';
+    }
+
+    function filterLocal(query, category) {
+      const q = query.toLowerCase();
+      return LOCAL_SKILLS.filter(s => {
+        const matchesQuery = !q ||
+          s.name.toLowerCase().includes(q) ||
+          s.description.toLowerCase().includes(q) ||
+          s.tags.some(t => t.toLowerCase().includes(q));
+        const matchesCategory = !category || s.category === category;
+        return matchesQuery && matchesCategory;
+      });
+    }
+
+    function renderResults(query, category) {
+      const local = filterLocal(query, category);
+      localResults.innerHTML = local.length
+        ? local.map(renderSkillCard).join('')
+        : '<p class="no-results">No skills match this query.</p>';
+      // Trigger fade-in on dynamically injected cards
+      localResults.querySelectorAll('.animate-fadein').forEach(function(el) {
+        el.classList.add('visible');
+      });
+    }
+
+    searchInput.addEventListener('input', function(e) {
+      clearTimeout(searchTimeout);
+      currentQuery = e.target.value.trim();
+      searchTimeout = setTimeout(function() { renderResults(currentQuery, activeCategory); }, 300);
+    });
+
+    document.querySelectorAll('[data-category]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var cat = btn.dataset.category;
+        if (activeCategory === cat) {
+          activeCategory = null;
+          btn.classList.remove('active');
+        } else {
+          document.querySelectorAll('[data-category]').forEach(function(b) { b.classList.remove('active'); });
+          activeCategory = cat;
+          btn.classList.add('active');
+        }
+        renderResults(currentQuery, activeCategory);
+      });
+    });
+
+    renderResults('', null);
+  </script>
+
+  <script>
+    var modal = document.getElementById('skill-modal');
+    var form = document.getElementById('skill-form');
+    var success = document.getElementById('skill-form-success');
+
+    // Skill detail modal
+    var detailModal = document.getElementById('skill-detail-modal');
+    window.openSkillDetail = function(encoded) {
+      var skill = JSON.parse(decodeURIComponent(encoded));
+      document.getElementById('sd-name').textContent = skill.name;
+      document.getElementById('sd-description').textContent = skill.description;
+      document.getElementById('sd-source').textContent = skill.source.toUpperCase();
+      document.getElementById('sd-category').textContent = skill.category;
+      document.getElementById('sd-link').href = skill.sourceUrl;
+      var preventsWrap = document.getElementById('sd-prevents-wrap');
+      var prevents = skill.prevents && skill.prevents.length ? skill.prevents.join(', ') : null;
+      if (prevents) {
+        document.getElementById('sd-prevents').textContent = prevents;
+        preventsWrap.style.display = 'block';
+      } else {
+        preventsWrap.style.display = 'none';
+      }
+      var tagsWrap = document.getElementById('sd-tags-wrap');
+      var tags = skill.tags && skill.tags.length ? skill.tags : [];
+      if (tags.length) {
+        document.getElementById('sd-tags').innerHTML = tags.map(function(t) { return '<span class="tag">' + t + '</span>'; }).join('');
+        tagsWrap.style.display = 'block';
+      } else {
+        tagsWrap.style.display = 'none';
+      }
+      detailModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+    function closeDetailModal() {
+      detailModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.getElementById('skill-detail-close').addEventListener('click', closeDetailModal);
+    document.getElementById('skill-detail-backdrop').addEventListener('click', closeDetailModal);
+
+    function openModal() {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('submit-skill-btn').addEventListener('click', openModal);
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeModal(); closeDetailModal(); }
+    });
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var url = document.getElementById('skill-url').value;
+      var name = document.getElementById('skill-name-input').value;
+      var reason = document.getElementById('skill-reason').value;
+      var email = document.getElementById('skill-email').value;
+      var btn = form.querySelector('[type="submit"]');
+      btn.disabled = true;
+      btn.textContent = 'SENDING...';
+      try {
+        var res = await fetch('https://api.nomoreslop.com/api/submit-skill', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url: url, name: name, reason: reason, email: email })
+        });
+        var data = await res.json();
+        if (data.success) {
+          form.style.display = 'none';
+          success.style.display = 'block';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'SEND SUBMISSION';
+          alert('Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.textContent = 'SEND SUBMISSION';
+        alert('Something went wrong. Please try again.');
+      }
+    });
+  </script>
+</Layout>

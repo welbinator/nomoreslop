@@ -1,0 +1,32 @@
+# NoMoreSlop.com
+
+> Resources for developers who build with AI and care about what they ship.
+
+NoMoreSlop is a curated hub of tools, skills, and resources to help developers catch the slop that AI coding tools produce. It covers code quality tools, agent skills, code reviewers, and software built natively for AI agent workflows.
+
+## Site Sections
+
+- [Tools](/tools): Code quality and static analysis tools for AI-assisted development (PHPCS, SonarCloud, Snyk, Knip, Fallow, etc.)
+- [Skills](/skills): Directory of agent skills from ClawHub and other sources
+- [Reviews](/reviews): Find a human code reviewer who specializes in AI-assisted projects
+- [Resources](/resources): Broader resources — AI coding tools, communities, newsletters, security references
+- [Built for Agents](/built-for-agents): Software built from the ground up to work with AI agents
+- [Blog](/blog): The Slop Report — articles on shipping quality AI-assisted code
+
+## API (Machine-Readable Data)
+
+All site data is available via a structured JSON API. Agents should use the API rather than scraping HTML.
+
+Base URL: https://api.nomoreslop.com
+
+- `GET /api` — API index with all available endpoints
+- `GET /api/tools` — Code quality tools. Filter: `?tag=php|javascript|typescript|css|security|github|dependencies|multi-language`
+- `GET /api/agentic-tools` — Tools built for AI agent workflows. Filter: `?category=`
+- `GET /api/resources` — Curated resources. Filter: `?category=`
+- `GET /api/search?q=<query>` — Search ClawHub agent skills
+
+## Optional
+
+- [API Documentation](/api): Full API reference with example responses
+- [Sitemap](/sitemap.xml): All pages
+- [API Catalog](/.well-known/api-catalog): Machine-readable API catalog (RFC draft)

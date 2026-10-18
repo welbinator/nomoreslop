@@ -1,0 +1,154 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout 
+  title="NoMoreSlop — AI-Assisted Code Quality for Developers" 
+  description="A resource hub for developers who build with AI and want to ship trustworthy code. Tools, checklists, skills, and human code reviews."
+>
+  <!-- Hero Section with noise texture -->
+  <section class="relative overflow-hidden" style="background: radial-gradient(ellipse at center, rgba(245, 158, 11, 0.05), var(--bg-primary)); padding: 8rem 2rem;">
+    <!-- Noise overlay -->
+    <div class="absolute inset-0 pointer-events-none opacity-30" style="filter: url(#noise);"></div>
+    
+    <div class="max-w-7xl mx-auto relative z-10">
+      <div class="max-w-5xl">
+        <h1 id="hero-headline" class="mb-8 leading-[0.9]">
+          <span id="hero-part1" aria-hidden="true"></span><span id="hero-part2" aria-hidden="true"></span><span id="typed-cursor" style="opacity:0; color: var(--accent);">|</span>
+          <noscript>Vibe coding is fine. Shipping bad code isn't.</noscript>
+        </h1>
+        <p class="text-xl md:text-2xl mb-10 max-w-3xl" style="color: var(--text-secondary); line-height: 1.6;">NoMoreSlop is a resource hub for developers who build with AI and care about what they ship.</p>
+        <div class="flex flex-col sm:flex-row gap-5">
+          <a href="/tools" class="btn btn-primary">Browse the Tools</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About / Origin Story - Asymmetric layout -->
+  <section class="max-w-7xl mx-auto px-6 py-24">
+    <div class="grid md:grid-cols-[200px_1fr] gap-12 items-start">
+      <!-- Photo -->
+      <div class="flex flex-col items-start">
+        <div class="w-40 h-40 overflow-hidden" style="border: 1px solid var(--border-subtle);">
+          
+            
+          <img src="/james.webp" alt="James Welbes" class="w-full h-full object-cover" />
+        </div>
+        <p class="mt-4 text-xs" style="color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.1em;">James Welbes</p>
+      </div>
+      
+      <!-- Story - offset for asymmetry -->
+      <div class="space-y-6 animate-fadein md:pl-12">
+        <p class="section-label">// WHY THIS EXISTS</p>
+        <h2 class="text-4xl md:text-5xl mb-8">I spent months feeling like a fraud.</h2>
+        <div class="space-y-5 text-base" style="color: var(--text-secondary);">
+         <p>For 2 years, I felt like a fraud. I couldn't stop building with AI. It was addicting, exhilarating. <i>The power.</i>&nbsp;With the help of AI I could do things that I was otherwise incapable of doing.</p><p>It was new and fun and exciting and....shameful. I felt embarrassed.&nbsp; I felt like I was pretending to be something I was not, and that everybody knew it and was judging me.</p><p>I was also certain that nobody was ever going to use the things I was building because they would assume that because it was created by AI that the code would be crap and full of vulnerabilities.</p><p>And I was pretty sure they were right.</p><p>But I stuck with it. I kept using AI and I kept learning more and more about how to use it properly and I learned more about code management and automated checks.</p><p>And then I paid a real human expert to review one of my WordPress plugins, and that's when it all changed.</p><p>After his initial review, he rated my plugin a C+, and told me that it was better than probably 80% of plugins out there. I addressed the things in his report, paid for a followup review, and was upgraded to an A-.</p><p>I addressed the things in the followup review, and haven't paid for a second followup review so, I'll have to settle for an A- rating for now.</p><p>But man, a C+ right out of the gate, top 20% of plugins with regards to code quality and security, and an A- after one round of updates?</p><p>Talk about a confidence boost! This WordPress plugin is officially NOT AI slop.&nbsp;</p><p>Literally the same day this happened, I was inspired and purchased nomoreslop.com with the intent of sharing what I've learned with the vibe coding community so that together we might squash this idea that all AI coded apps are slop and not to be taken seriously.</p>
+          <p style="color: var(--text-primary); font-weight: 500;">— James Welbes, developer and reluctant security student</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resource Cards -->
+  <section class="max-w-7xl mx-auto px-6 py-16">
+    <p class="section-label">// RESOURCES</p>
+    <div class="grid md:grid-cols-2 gap-6">
+      <a href="/tools" class="card animate-fadein">
+        <h3 class="font-display text-3xl mb-3">TOOLS</h3>
+        <p style="color: var(--text-secondary);">Automated checkers for code quality, dependency vulnerabilities, and static analysis.</p>
+      </a>
+      <a href="/skills" class="card animate-fadein" style="transition-delay: 0.1s;">
+        <h3 class="font-display text-3xl mb-3">SKILLS</h3>
+        <p style="color: var(--text-secondary);">Agent skill files that teach your AI assistant what not to do.</p>
+      </a>
+      <a href="/reviews" class="card animate-fadein" style="transition-delay: 0.2s;">
+        <h3 class="font-display text-3xl mb-3">REVIEWS</h3>
+        <p style="color: var(--text-secondary);">Vetted developers who specialize in reviewing AI-generated code.</p>
+      </a>
+      <a href="/checklist" class="card animate-fadein" style="transition-delay: 0.3s;">
+        <h3 class="font-display text-3xl mb-3">CHECKLIST</h3>
+        <p style="color: var(--text-secondary);">Design-level questions no automated tool will ever ask for you.</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Social Proof - Pull quote style -->
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <blockquote class="animate-fadein">
+      <p class="mb-4">"We got a C+ from a professional security reviewer. The code passed every automated scanner we had. The real problems were in the logic, not the syntax."</p>
+      <footer style="color: var(--text-secondary); font-size: 1rem; font-style: normal;">— James Welbes, developer</footer>
+    </blockquote>
+  </section>
+
+  <!-- Latest from Blog -->
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <p class="section-label">// LATEST</p>
+    <h2 class="mb-8">Latest from the Blog</h2>
+    <article class="card animate-fadein">
+      <a href="/blog/form-handler-wp-security-review">
+        <h3 class="font-display text-2xl mb-3 hover:text-accent transition-colors">HOW MY AI SLOP GOT AN A- RATING</h3>
+        <time style="color: var(--text-secondary); font-size: 0.875rem;">April 21, 2026</time>
+        <p style="color: var(--text-secondary); margin-top: 1rem;">A professional review of a vibe-coded WordPress plugin found three serious issues that every automated scanner missed.</p>
+      </a>
+    </article>
+  </section>
+  
+  <!-- Typing effect: pre-renders all chars as opacity-0 spans, reveals one by one -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const part1 = 'Vibe coding is fine.';
+      const part2 = " Shipping bad code isn't.";
+      const cursorEl = document.getElementById('typed-cursor') as HTMLElement;
+      const p1El = document.getElementById('hero-part1') as HTMLElement;
+      const p2El = document.getElementById('hero-part2') as HTMLElement;
+      if (!p1El || !p2El || !cursorEl) return;
+
+      // Build spans for every character, all invisible
+      const buildSpans = (text: string): HTMLElement[] => {
+        return text.split('').map(ch => {
+          const s = document.createElement('span');
+          s.textContent = ch;
+          s.style.opacity = '0';
+          s.style.transition = 'opacity 0.05s';
+          return s;
+        });
+      };
+
+      const spans1 = buildSpans(part1);
+      const spans2 = buildSpans(part2);
+      spans1.forEach(s => p1El.appendChild(s));
+      spans2.forEach(s => p2El.appendChild(s));
+
+      const allSpans = [...spans1, ...spans2];
+      let index = 0;
+
+      // Cursor starts hidden, will appear after first char reveals
+      cursorEl.style.opacity = '0';
+      let cursorVisible = false;
+      const continuousBlink = setInterval(() => {
+        cursorVisible = !cursorVisible;
+        cursorEl.style.opacity = cursorVisible ? '1' : '0';
+      }, 500);
+
+      function revealNext() {
+        if (index < allSpans.length) {
+          allSpans[index].style.opacity = '1';
+          // Move cursor to sit immediately after the just-revealed span
+          allSpans[index].after(cursorEl);
+          index++;
+          const delay = (index === spans1.length) ? 600 : 65;
+          setTimeout(revealNext, delay);
+        } else {
+          setTimeout(() => {
+            clearInterval(continuousBlink);
+            cursorEl.style.transition = 'opacity 0.3s';
+            cursorEl.style.opacity = '0';
+          }, 2000);
+        }
+      }
+
+      revealNext();
+    });
+  </script>
+</Layout>

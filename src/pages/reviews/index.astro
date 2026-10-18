@@ -1,0 +1,217 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { reviewers } from '../../data/reviewers';
+
+const featuredReviewers = reviewers.filter(r => r.featured);
+const nonFeaturedReviewers = reviewers.filter(r => !r.featured);
+---
+
+<Layout 
+  title="Find a Code Reviewer — NoMoreSlop" 
+  description="A vetted directory of developers who review AI-generated code. Find WordPress, Node.js, and full-stack code reviewers."
+>
+  <section class="max-w-7xl mx-auto px-6 py-16">
+    <!-- Page Headline -->
+    <div class="mb-16">
+      <p class="section-label">// CODE REVIEWERS</p>
+      <h1 class="mb-6">Find a Reviewer</h1>
+      <p class="text-xl" style="color: var(--text-secondary); line-height: 1.7; max-width: 52rem;">Automated tools catch roughly 30% of the real problems in AI-generated code. A human who has seen enough AI output to know where the gaps are will find the rest.</p>
+    </div>
+
+    <!-- Why human review matters -->
+    <div class="mb-20 grid md:grid-cols-3 gap-px" style="border: 1px solid var(--border-subtle); background: var(--border-subtle);">
+      <div class="p-8" style="background: var(--bg-primary);">
+        <p class="font-display text-4xl mb-4" style="color: var(--accent);">No linter</p>
+        <p style="color: var(--text-secondary); line-height: 1.7;">catches a rate limiting feature that defaults to off. The code is syntactically correct. The behavior is a security hole.</p>
+      </div>
+      <div class="p-8" style="background: var(--bg-primary);">
+        <p class="font-display text-4xl mb-4" style="color: var(--accent);">No scanner</p>
+        <p style="color: var(--text-secondary); line-height: 1.7;">flags the gap between a cipher that works and one that is authenticated. AES-256-CBC passes every automated check. It is not authenticated encryption.</p>
+      </div>
+      <div class="p-8" style="background: var(--bg-primary);">
+        <p class="font-display text-4xl mb-4" style="color: var(--accent);">No tool</p>
+        <p style="color: var(--text-secondary); line-height: 1.7;">catches an admin-configurable URL being passed to an HTTP client without a hostname allowlist. That is an SSRF vulnerability by design.</p>
+      </div>
+    </div>
+
+    <!-- Pull quote -->
+    <div class="mb-20 px-8 py-10 animate-fadein" style="border-left: 3px solid var(--accent);">
+      <p class="text-2xl leading-relaxed mb-4" style="color: var(--text-primary); font-family: var(--font-mono);">&ldquo;The code quality is better than most plugins I see. First pass I was going to grade it B+. Then I dug into the feature logic.&rdquo;</p>
+      <p class="text-sm" style="color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">&mdash; Marcin Dudek, after reviewing a vibe-coded WordPress plugin</p>
+    </div>
+
+    <!-- Featured Section -->
+    {featuredReviewers.length > 0 && (
+      <div class="mb-20">
+        {featuredReviewers.length === 1 ? (
+          <!-- Single Featured Reviewer - Prominent full-width card -->
+          <article class="card animate-fadein p-10">
+            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-8">
+              <div>
+                <h2 class="font-display text-5xl mb-4">{featuredReviewers[0].name}</h2>
+                <span class="inline-block px-4 py-2 text-sm" style="background: var(--bg-secondary); color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border-subtle);">{featuredReviewers[0].specialty}</span>
+              </div>
+              <a 
+                href={featuredReviewers[0].ctaUrl}
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="btn btn-primary mt-6 lg:mt-0"
+              >
+                {featuredReviewers[0].ctaLabel}
+              </a>
+            </div>
+
+            <div class="space-y-8">
+              <div>
+                <h3 class="font-display text-2xl mb-4">BACKGROUND</h3>
+                <p style="color: var(--text-secondary); line-height: 1.7;">{featuredReviewers[0].background}</p>
+              </div>
+
+              <div>
+                <h3 class="font-display text-2xl mb-4">WHAT THEY REVIEW</h3>
+                <div class="flex flex-wrap gap-3">
+                  {featuredReviewers[0].whatHeChecks.map(item => (
+                    <span class="px-4 py-2 text-sm" style="background: var(--code-bg); color: var(--text-secondary); font-family: var(--font-mono); border: 1px solid var(--border-subtle);">{item}</span>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h3 class="font-display text-2xl mb-4">PRICING</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                  {featuredReviewers[0].pricing.tiers.map(tier => (
+                    <div class="p-6" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle);">
+                      <p class="text-sm mb-2" style="color: var(--text-secondary); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">{tier.label}</p>
+                      <p class="font-display text-4xl mb-3" style="color: var(--accent);">{tier.price}</p>
+                      <p style="color: var(--text-secondary); font-size: 0.875rem;">{tier.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p style="color: var(--text-secondary);"><span style="color: var(--accent); font-weight: 600;">TURNAROUND:</span> {featuredReviewers[0].turnaround}</p>
+              </div>
+            </div>
+          </article>
+        ) : (
+          <!-- Multiple Featured Reviewers (random selection) -->
+          <div>
+            {featuredReviewers.map((reviewer, index) => (
+              <article 
+                data-featured-card
+                style={index > 0 ? "display:none" : ""}
+                class="card animate-fadein p-10 mb-6"
+              >
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between mb-8">
+                  <div>
+                    <h2 class="font-display text-5xl mb-4">{reviewer.name}</h2>
+                    <span class="inline-block px-4 py-2 text-sm" style="background: var(--bg-secondary); color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border-subtle);">{reviewer.specialty}</span>
+                  </div>
+                  <a 
+                    href={reviewer.ctaUrl}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    class="btn btn-primary mt-6 lg:mt-0"
+                  >
+                    {reviewer.ctaLabel}
+                  </a>
+                </div>
+
+                <div class="space-y-8">
+                  <div>
+                    <h3 class="font-display text-2xl mb-4">BACKGROUND</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7;">{reviewer.background}</p>
+                  </div>
+
+                  <div>
+                    <h3 class="font-display text-2xl mb-4">WHAT THEY REVIEW</h3>
+                    <div class="flex flex-wrap gap-3">
+                      {reviewer.whatHeChecks.map(item => (
+                        <span class="px-4 py-2 text-sm" style="background: var(--code-bg); color: var(--text-secondary); font-family: var(--font-mono); border: 1px solid var(--border-subtle);">{item}</span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 class="font-display text-2xl mb-4">PRICING</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                      {reviewer.pricing.tiers.map(tier => (
+                        <div class="p-6" style="background: var(--bg-secondary); border: 1px solid var(--border-subtle);">
+                          <p class="text-sm mb-2" style="color: var(--text-secondary); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">{tier.label}</p>
+                          <p class="font-display text-4xl mb-3" style="color: var(--accent);">{tier.price}</p>
+                          <p style="color: var(--text-secondary); font-size: 0.875rem;">{tier.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p style="color: var(--text-secondary);"><span style="color: var(--accent); font-weight: 600;">TURNAROUND:</span> {reviewer.turnaround}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+            
+            <div class="text-center">
+              <a href="/reviews/featured" class="hover:text-accent transition-colors" style="font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.875rem;">
+                View all featured reviewers →
+              </a>
+            </div>
+
+            <script>
+              // Pick a random featured card to show
+              const cards = document.querySelectorAll('[data-featured-card]');
+              if (cards.length > 1) {
+                const randomIndex = Math.floor(Math.random() * cards.length);
+                cards.forEach((card, index) => {
+                  (card as HTMLElement).style.display = index === randomIndex ? 'block' : 'none';
+                });
+              }
+            </script>
+          </div>
+        )}
+      </div>
+    )}
+
+    <!-- All Reviewers Section -->
+    {nonFeaturedReviewers.length > 0 && (
+      <div class="mb-16">
+        <h2 class="mb-8">All Reviewers</h2>
+        {/* TODO: implement static pagination when reviewer count exceeds 9 */}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {nonFeaturedReviewers.map((reviewer, index) => (
+            <article class="card animate-fadein" style={`transition-delay: ${index * 0.05}s;`}>
+              <div class="mb-6">
+                <h3 class="font-display text-2xl mb-3">{reviewer.name}</h3>
+                <span class="inline-block px-3 py-1 text-xs" style="background: var(--bg-secondary); color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid var(--border-subtle);">{reviewer.specialty}</span>
+              </div>
+              
+              <p class="mb-6 text-sm line-clamp-2" style="color: var(--text-secondary);">{reviewer.background.split('.')[0]}.</p>
+              
+              <div class="mb-6">
+                <p class="text-xs mb-1" style="color: var(--text-secondary); font-family: var(--font-mono);">STARTING AT</p>
+                <p class="font-display text-3xl" style="color: var(--accent);">{reviewer.pricing.tiers[0].price}</p>
+              </div>
+
+              <a 
+                href={`/reviews/${reviewer.slug}`}
+                class="btn block text-center w-full"
+              >
+                VIEW DETAILS
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- Bottom CTA -->
+    <div class="p-8" style="background: var(--bg-card); border-left: 3px solid var(--accent); border-right: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+      <h3 class="font-display text-2xl mb-4">ARE YOU A DEVELOPER WHO REVIEWS AI-GENERATED CODE?</h3>
+      <p style="color: var(--text-secondary);">
+        Email: <a href="mailto:hello@nomoreslop.com" class="hover:text-accent transition-colors font-semibold">hello@nomoreslop.com</a>
+      </p>
+    </div>
+  </section>
+</Layout>

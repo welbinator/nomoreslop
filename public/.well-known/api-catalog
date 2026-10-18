@@ -1,0 +1,29 @@
+{
+  "apis": [
+    {
+      "title": "NoMoreSlop API Index",
+      "description": "API index — lists all available endpoints. Start here.",
+      "url": "https://api.nomoreslop.com/api"
+    },
+    {
+      "title": "Code Quality Tools",
+      "description": "Static analysis and dependency scanning tools for AI-assisted development. Filter by tag: php, javascript, typescript, css, security, github, dependencies, multi-language.",
+      "url": "https://api.nomoreslop.com/api/tools"
+    },
+    {
+      "title": "Built for Agents Tools",
+      "description": "Software built from the ground up to work with AI agents — readable APIs, structured data, agent-friendly interfaces.",
+      "url": "https://api.nomoreslop.com/api/agentic-tools"
+    },
+    {
+      "title": "Resources",
+      "description": "Curated resources for developers building with AI: tools, communities, newsletters, security references.",
+      "url": "https://api.nomoreslop.com/api/resources"
+    },
+    {
+      "title": "Skills Search",
+      "description": "Search ClawHub agent skills. Required ?q= param.",
+      "url": "https://api.nomoreslop.com/api/search"
+    }
+  ]
+}

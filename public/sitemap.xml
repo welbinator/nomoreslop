@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nomoreslop.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://nomoreslop.com/tools</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://nomoreslop.com/skills</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://nomoreslop.com/reviews</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://nomoreslop.com/reviews/marcin-dudek</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nomoreslop.com/reviews/featured</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://nomoreslop.com/resources</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nomoreslop.com/built-for-agents</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nomoreslop.com/blog</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://nomoreslop.com/blog/form-handler-wp-security-review</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+</urlset>

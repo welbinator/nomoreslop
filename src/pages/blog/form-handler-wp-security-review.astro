@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout 
+  title="How My AI Slop Got An A- Rating — NoMoreSlop" 
+  description="A vibe-coded WordPress plugin went from C+ to A- after two professional security reviews. Here's what was found, what was fixed, and what Marcin actually said."
+>
+  <article class="max-w-3xl mx-auto px-6 py-16">
+    <header class="mb-12">
+      <h1 class="font-display text-5xl md:text-6xl mb-6 leading-[0.95]">How My AI Slop Got An A- Rating</h1>
+      <div style="color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">
+        <time>April 21, 2026</time>
+        <span class="mx-2">·</span>
+        <span>James Welbes</span>
+        <span class="mx-2">·</span>
+        <span>10 min read</span>
+      </div>
+    </header>
+
+    <div class="space-y-8 text-base leading-[1.8]" style="color: var(--text-secondary);">
+      <p class="text-xl first-letter:text-6xl first-letter:font-display first-letter:mr-2 first-letter:float-left first-letter:leading-[0.8]" style="color: var(--text-primary);">I build WordPress plugins with AI assistance. My contribution to code quality was downloading a wordpress-pro skill from ClawHub, integrating Snyk, Socket, and PHPCS/PHPStan into the project, and then trusting that the AI knew what it was doing. Which, to be fair, is exactly what most of us mean when we say we are vibe coding. The output looked fine. The scanners were happy. I was happy. Good enough, I figured.</p>
+
+      <p>Then I hired Marcin Dudek to review it.</p>
+
+      <p>Marcin is a WordPress developer with 15 years of experience, former CTO of CreativeMinds where he built and maintained 50+ plugins, and a member of the top 3% of freelance developers on Toptal. He recently launched a WordPress plugin code review and security audit service specifically aimed at AI-assisted development. His pitch is simple: he vibe-codes his own products too, so he knows exactly where the gaps show up. You can find his service at <a href="https://marcindudek.dev/services/wp-plugin-review/" target="_blank" rel="noopener noreferrer" class="hover:text-accent transition-colors underline">marcindudek.dev/services/wp-plugin-review/</a>.</p>
+
+      <h2 class="font-display text-3xl mt-12 mb-6" style="color: var(--accent); border-left: 3px solid var(--accent); padding-left: 1.5rem;">THE FIRST GRADE: C+</h2>
+      <p>C+. His exact words: &ldquo;The code quality is better than 80% of plugins out there. Nonces, prepared queries, capability checks all in the right places.&rdquo; He also said there were zero typical problems and that he had to try hard to find the serious issues. That was genuinely reassuring to hear.</p>
+
+      <h2 class="font-display text-3xl mt-12 mb-6" style="color: var(--accent); border-left: 3px solid var(--accent); padding-left: 1.5rem;">WHAT HE FOUND</h2>
+      <p>The first was a rate limiting problem. The plugin had a rate limit feature, but it was off by default. You had to explicitly configure it per form or nothing was throttled at all. Combined with the auto-reply feature, that meant an attacker could submit a form with any email address as the recipient and use the site&apos;s verified sending domain to blast emails at whoever they wanted. Marcin confirmed this live during the review. Not theoretical.</p>
+
+      <p>The second was the GitHub updater. When the plugin checks for updates and downloads a new version, it handed the zip directly to WordPress with no hash verification. A compromised release asset or a man-in-the-middle attack could deliver arbitrary PHP to every site running the plugin.</p>
+
+      <p>The third was the encryption. API keys were stored using AES-256-CBC with no authentication tag. That means someone with database write access could manipulate ciphertexts in ways that survive decryption. There was also a last-resort key fallback that used the site URL and database prefix, which are predictable on a lot of installs.</p>
+
+      <p>Beyond those three, he found a handful of lower-severity issues: an SSRF vulnerability in the ActiveCampaign integration, some input sanitization gaps, spam detection rules that could be bypassed with trivial character changes, and a few code quality items.</p>
+
+      <h2 class="font-display text-3xl mt-12 mb-6" style="color: var(--accent); border-left: 3px solid var(--accent); padding-left: 1.5rem;">WHAT WE FIXED</h2>
+      <p>Everything. Same day. Rate limiting now defaults to 5 submissions per hour per IP on every form, no configuration required. The GitHub updater now generates a SHA-256 hash of the release zip and uploads it as a separate asset. Before WordPress installs any update, the updater fetches that hash and verifies the download matches. If the hash file is missing, the update is blocked entirely. The encryption was upgraded to AES-256-GCM, which includes authentication as part of the cipher. Existing stored API keys are automatically migrated to the new format on the first admin page load after the update. The SSRF issue in the ActiveCampaign integration was fixed with a hostname allowlist. The integration will now only make requests to domains that ActiveCampaign actually issues accounts on. The spam rules were tightened, the sanitization gaps were closed, and the code quality items were cleaned up. The whole thing shipped as version 1.4.0.</p>
+
+      <h2 class="font-display text-3xl mt-12 mb-6" style="color: var(--accent); border-left: 3px solid var(--accent); padding-left: 1.5rem;">THE FOLLOWUP REVIEW: A&minus;</h2>
+      <p>I paid $99 for a followup review &mdash; Marcin&apos;s quick scan tier. He got to it the same day. Here is what he said:</p>
+
+      <blockquote class="my-8 px-8 py-6" style="border-left: 3px solid var(--accent); background: var(--bg-secondary);">
+        <p style="color: var(--text-primary); line-height: 1.8;">&ldquo;Ten of thirteen findings are done &mdash; including the ones that actually mattered. Rate limit default went from 0 to 5 and I live-tested it &mdash; it enforces correctly. The crypto got upgraded from CBC to GCM. That&apos;s real work.&rdquo;</p>
+        <footer class="mt-4 text-sm" style="color: var(--accent); font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">&mdash; Marcin Dudek, followup review</footer>
+      </blockquote>
+
+      <p>Final grade: A-</p>
+
+      <h2 class="font-display text-3xl mt-12 mb-6" style="color: var(--accent); border-left: 3px solid var(--accent); padding-left: 1.5rem;">WHAT I ACTUALLY THINK ABOUT THIS</h2>
+      <p>Here is the honest version: AI wrote most of this code, and the surface-level stuff was genuinely solid. The things Marcin found were not obvious. They required understanding how WordPress update mechanisms work, how email authentication interacts with form plugins, and what authenticated encryption actually means. The kind of knowledge that comes from spending years in the field, not from a prompt.</p>
+
+      <p>The AI produced code that looked correct and passed automated checks. The vulnerabilities were in the logic, not the syntax. No linter catches a missing rate limit default. No static analyzer flags the conceptual gap between <em>this cipher works</em> and <em>this cipher is authenticated</em>. That is the actual risk with AI-assisted development &mdash; it is not that the code is obviously bad. It is that the code is good enough to pass every automated check while still having real problems that require a human expert to find.</p>
+
+      <p>For what it&apos;s worth: if a C+ is better than 80% of plugins out there, an A&minus; is pretty damn good. I&apos;m confident we&apos;d hit A+ if I paid for another round of fixes and another followup review. I didn&apos;t. I&apos;m happy with where it landed.</p>
+
+      <p>Total cost: $250 for the initial full review, $99 for the followup. $349 to go from &ldquo;I think this is probably fine&rdquo; to &ldquo;a 15-year WordPress veteran live-tested it and graded it A&minus;.&rdquo; If you are shipping a WordPress plugin that handles form submissions, email sending, or stored credentials, that is a bargain. The $250 full review alone is cheaper than the conversation you would have to have with your clients after a confirmed phishing relay.</p>
+    </div>
+
+    <footer class="mt-16 pt-8" style="border-top: 1px solid var(--border-subtle);">
+      <a href="/blog" class="hover:text-accent transition-colors" style="font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.875rem;">← Back to The Slop Report</a>
+    </footer>
+  </article>
+</Layout>

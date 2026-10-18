@@ -1,0 +1,164 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const checklistItems = {
+  "Rate Limiting": [
+    "Does every public-facing form submission endpoint have rate limiting enabled?",
+    "Does rate limiting default to ON, not opt-in?",
+    "Is rate limiting enforced per-IP?",
+    "For features that send outbound email, is there also a per-recipient cooldown to prevent distributed IP abuse?"
+  ],
+  "Encryption": [
+    "Are sensitive values (API keys, tokens) encrypted at rest — not just base64 encoded?",
+    "Are you using authenticated encryption (AES-256-GCM or similar) rather than unauthenticated (AES-256-CBC)?",
+    "Is your encryption key derived from a secret constant, not from predictable values like site URL or database prefix?"
+  ],
+  "External Requests (SSRF)": [
+    "For any URL that comes from user input or admin configuration, is it validated against a hostname allowlist — not just checked for HTTPS?",
+    "Is HTTPS validation present (necessary but not sufficient on its own)?"
+  ],
+  "Email": [
+    "If you intercept wp_mail() or equivalent, does your filter return null (not false) on failure, so the fallback mailer can run?",
+    "Would a Brevo/SendGrid/Mailgun outage silently drop WooCommerce order emails, 2FA codes, and password resets?"
+  ],
+  "Public Endpoints": [
+    "Do any public endpoints return different status codes for valid vs invalid identifiers? (A 200/404 difference lets attackers enumerate valid slugs.)",
+    "Are public endpoints that touch the database rate-limited?"
+  ],
+  "Supply Chain": [
+    "Does your GitHub/GitLab release workflow generate a hash of the release artifact?",
+    "Does your auto-updater verify that hash before installing?",
+    "Does it fail closed (block the update) if the hash file is missing?"
+  ],
+  "Output Escaping": [
+    "Is every piece of dynamic data wrapped in esc_html(), esc_attr(), or equivalent before being echoed into HTML — including boolean ternary expressions?"
+  ],
+  "Input Handling": [
+    "Is there an is_string() guard before calling sanitize functions on $_POST values that might be arrays?",
+    "Is wp_unslash() called exactly once per value — not by both the caller and the called function?"
+  ]
+};
+---
+
+<Layout 
+  title="The Vibe Coding Checklist — NoMoreSlop" 
+  description="Design-level security questions to run through before shipping AI-assisted code."
+>
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <p class="section-label">// PRE-SHIP CHECKLIST</p>
+    <h1 class="mb-8">The things your scanner won't catch.</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7;">Run through this before you ship. These are not syntax rules — they are design-level questions that no automated tool will ask for you.</p>
+
+    <!-- Checklist Sections -->
+    <div class="space-y-10">
+      {Object.entries(checklistItems).map(([section, items], sectionIndex) => (
+        <section class="animate-fadein" style={`transition-delay: ${sectionIndex * 0.05}s; padding: 2rem; background: var(--bg-card); border: 1px solid var(--border-subtle);`}>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="font-display text-3xl">{section}</h2>
+            <div class="text-sm" style="color: var(--text-secondary); font-family: var(--font-mono);">
+              <span data-progress={section}>0/{items.length}</span>
+            </div>
+          </div>
+          <div class="progress-track mb-6">
+            <div class="progress-fill" style="width: 0%" data-progress-bar={section}></div>
+          </div>
+          <div class="space-y-4">
+            {items.map((item, index) => (
+              <label class="flex items-start gap-3 cursor-pointer group checklist-item">
+                <input 
+                  type="checkbox" 
+                  class="checklist-checkbox"
+                  data-section={section}
+                  data-index={index}
+                />
+                <span class="leading-relaxed checklist-label" style="color: var(--text-secondary);">{item}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="mt-16 p-8 text-center" style="background: var(--bg-card); border-left: 3px solid var(--accent); border-right: 1px solid var(--border-subtle); border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);">
+      <p class="text-lg mb-4" style="color: var(--text-secondary);">Still not sure? That's what the reviews are for.</p>
+      <a href="/reviews" class="hover:text-accent transition-colors font-semibold text-lg" style="font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">Find a reviewer →</a>
+    </div>
+  </section>
+
+  <script>
+    // Update progress for a section
+    function updateProgress(section: string) {
+      const checkboxes = document.querySelectorAll(`.checklist-checkbox[data-section="${section}"]`);
+      const checked = Array.from(checkboxes).filter(cb => (cb as HTMLInputElement).checked).length;
+      const total = checkboxes.length;
+      const percentage = total > 0 ? (checked / total) * 100 : 0;
+      
+      const progressText = document.querySelector(`[data-progress="${section}"]`);
+      const progressBar = document.querySelector(`[data-progress-bar="${section}"]`);
+      
+      if (progressText) progressText.textContent = `${checked}/${total}`;
+      if (progressBar) (progressBar as HTMLElement).style.width = `${percentage}%`;
+      
+      // Save state to localStorage
+      saveState();
+    }
+
+    // Save all checkbox states to localStorage
+    function saveState() {
+      const state: Record<string, boolean[]> = {};
+      document.querySelectorAll('.checklist-checkbox').forEach(cb => {
+        const section = (cb as HTMLInputElement).dataset.section;
+        const index = parseInt((cb as HTMLInputElement).dataset.index || '0', 10);
+        const checked = (cb as HTMLInputElement).checked;
+        if (section) {
+          if (!state[section]) state[section] = [];
+          state[section][index] = checked;
+        }
+      });
+      localStorage.setItem('checklistState', JSON.stringify(state));
+    }
+
+    // Restore state from localStorage
+    function restoreState() {
+      try {
+        const saved = localStorage.getItem('checklistState');
+        if (!saved) return;
+        const state = JSON.parse(saved);
+        Object.entries(state).forEach(([section, values]) => {
+          (values as boolean[]).forEach((checked, index) => {
+            const cb = document.querySelector(`.checklist-checkbox[data-section="${section}"][data-index="${index}"]`) as HTMLInputElement;
+            if (cb) {
+              cb.checked = checked;
+            }
+          });
+          updateProgress(section);
+        });
+      } catch (e) {
+        console.error('Failed to restore checklist state', e);
+      }
+    }
+
+    // Attach event listeners
+    document.querySelectorAll('.checklist-checkbox').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const section = (e.target as HTMLInputElement).dataset.section;
+        if (section) updateProgress(section);
+      });
+    });
+
+    // Initialize progress on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      restoreState();
+    });
+  </script>
+
+  <style>
+    /* Strikethrough on checked items */
+    .checklist-item:has(input[type="checkbox"]:checked) .checklist-label {
+      text-decoration: line-through;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+    }
+  </style>
+</Layout>

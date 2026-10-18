@@ -1,0 +1,233 @@
+---
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Preload critical fonts -->
+    <link rel="preload" href="/fonts/bebas-neue.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/ibm-plex-mono-400.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <!-- AI Agent discoverability: structured data API available at api.nomoreslop.com -->
+    <!-- Full API reference: https://nomoreslop.com/api -->
+    <!-- Machine-readable index: https://nomoreslop.com/llms.txt -->
+    <meta name="api-base" content="https://api.nomoreslop.com" />
+    <meta name="api-index" content="https://api.nomoreslop.com/api" />
+    <meta name="api-docs" content="https://nomoreslop.com/api" />
+    <link rel="api-catalog" href="/.well-known/api-catalog" />
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="LLM-readable site index" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-G1FBKL8633"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-G1FBKL8633');
+    </script>
+    <style is:global>
+      @import '../styles/global.css';
+    </style>
+  </head>
+  <body>
+    <!-- Noise filter for hero sections -->
+    <svg class="noise-filter" style="position:absolute;width:0;height:0;">
+      <filter id="noise">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+        <feColorMatrix type="saturate" values="0"/>
+        <feBlend in="SourceGraphic" mode="overlay" result="blend"/>
+        <feComposite in="blend" in2="SourceGraphic"/>
+      </filter>
+    </svg>
+
+    <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--bg-primary); border-bottom: 1px solid var(--border-subtle);">
+      <nav class="max-w-7xl mx-auto px-6 py-6 flex items-center justify-between">
+        <a href="/" class="text-2xl font-display tracking-wide hover:text-accent transition-colors">
+          NO_MORE_<span class="strikethrough-red">SLOP</span>
+        </a>
+        
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-8" style="font-family: var(--font-mono); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">
+          <a href="/tools" class="hover:text-accent transition-colors">Tools</a>
+          <a href="/skills" class="hover:text-accent transition-colors">Skills</a>
+          <a href="/reviews" class="hover:text-accent transition-colors">Reviews</a>
+          <a href="/blog" class="hover:text-accent transition-colors">Blog</a>
+          <a href="/resources" class="hover:text-accent transition-colors">Resources</a>
+          <a href="/built-for-agents" class="hover:text-accent transition-colors">Built for Agents</a>
+          <a href="/community" class="hover:text-accent transition-colors">Community</a>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu-btn" class="md:hidden p-2" aria-label="Toggle menu" style="color: var(--text-primary);">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu" class="hidden md:hidden" style="border-top: 1px solid var(--border-subtle);">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex flex-col gap-4" style="font-family: var(--font-mono); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.1em;">
+          <a href="/tools" class="hover:text-accent transition-colors">Tools</a>
+          <a href="/skills" class="hover:text-accent transition-colors">Skills</a>
+          <a href="/reviews" class="hover:text-accent transition-colors">Reviews</a>
+          <a href="/blog" class="hover:text-accent transition-colors">Blog</a>
+          <a href="/resources" class="hover:text-accent transition-colors">Resources</a>
+          <a href="/built-for-agents" class="hover:text-accent transition-colors">Built for Agents</a>
+          <a href="/community" class="hover:text-accent transition-colors">Community</a>
+        </div>
+      </div>
+    </header>
+
+    <main style="padding-top: 5rem;">
+      <slot />
+    </main>
+
+    <footer style="border-top: 1px solid var(--border-subtle); margin-top: 6rem; padding: 2rem 0; background: var(--bg-secondary);">
+      <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+          <h3 class="font-display text-xl">NO_MORE_<span class="strikethrough-red">SLOP</span></h3>
+          <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.25rem;">Resources for developers who build with AI and care about what they ship.</p>
+        </div>
+        <div style="color: var(--text-secondary); font-size: 0.8rem;">
+          &copy; {new Date().getFullYear()} NoMoreSlop.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Feedback Widget -->
+    <div id="feedback-widget" style="position:fixed; bottom:2rem; right:1.5rem; z-index:300;">
+      <!-- Toggle button -->
+      <button id="feedback-toggle" aria-label="Give feedback"
+        style="display:flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; background:var(--bg-card); border:1px solid var(--border-subtle); color:var(--text-secondary); font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.3);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+        <span class="hidden sm:inline">Feedback</span>
+      </button>
+
+      <!-- Feedback panel -->
+      <div id="feedback-panel" style="display:none; position:absolute; bottom:3rem; right:0; width:300px; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); padding:1.5rem; box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+          <p style="font-family:var(--font-display); font-size:1.25rem; color:var(--text-primary);">FEEDBACK</p>
+          <button id="feedback-close" style="background:none; border:none; color:var(--text-secondary); font-size:1.25rem; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+        <form id="feedback-form">
+          <!-- Rating -->
+          <div style="margin-bottom:1rem;">
+            <p style="font-family:var(--font-mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">How's the site?</p>
+            <div style="display:flex; gap:0.5rem;">
+              <button type="button" data-rating="👍 Good" class="rating-btn" style="flex:1; padding:0.4rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-secondary); font-size:1rem; cursor:pointer; transition:all 0.15s;">👍</button>
+              <button type="button" data-rating="😐 Okay" class="rating-btn" style="flex:1; padding:0.4rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-secondary); font-size:1rem; cursor:pointer; transition:all 0.15s;">😐</button>
+              <button type="button" data-rating="👎 Needs work" class="rating-btn" style="flex:1; padding:0.4rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-secondary); font-size:1rem; cursor:pointer; transition:all 0.15s;">👎</button>
+            </div>
+          </div>
+          <!-- Message -->
+          <div style="margin-bottom:1rem;">
+            <p style="font-family:var(--font-mono); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Tell us more</p>
+            <textarea id="feedback-message" rows="3" placeholder="What could be better?" style="width:100%; padding:0.6rem 0.75rem; font-family:var(--font-mono); font-size:0.8rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; resize:none; box-sizing:border-box;"></textarea>
+          </div>
+          <button type="submit" style="width:100%; padding:0.6rem; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; background:var(--accent); color:var(--bg-primary); border:none; cursor:pointer; transition:opacity 0.2s;">Send</button>
+        </form>
+        <div id="feedback-success" style="display:none; text-align:center; padding:1rem 0;">
+          <p style="font-family:var(--font-display); font-size:1.25rem; color:var(--accent); margin-bottom:0.5rem;">THANKS!</p>
+          <p style="font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary);">Your feedback was sent.</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var fbToggle = document.getElementById('feedback-toggle');
+      var fbPanel = document.getElementById('feedback-panel');
+      var fbClose = document.getElementById('feedback-close');
+      var fbForm = document.getElementById('feedback-form');
+      var fbSuccess = document.getElementById('feedback-success');
+      var selectedRating = null;
+
+      fbToggle.addEventListener('click', function() {
+        fbPanel.style.display = fbPanel.style.display === 'none' ? 'block' : 'none';
+      });
+      fbClose.addEventListener('click', function() { fbPanel.style.display = 'none'; });
+
+      document.querySelectorAll('.rating-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          selectedRating = btn.dataset.rating;
+          document.querySelectorAll('.rating-btn').forEach(function(b) {
+            b.style.borderColor = 'var(--border-subtle)';
+            b.style.background = 'var(--bg-secondary)';
+          });
+          btn.style.borderColor = 'var(--accent)';
+          btn.style.background = 'rgba(245,158,11,0.15)';
+        });
+      });
+
+      fbForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        var message = document.getElementById('feedback-message').value.trim();
+        if (!message && !selectedRating) return;
+        var submitBtn = fbForm.querySelector('[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+        try {
+          var res = await fetch('https://api.nomoreslop.com/api/feedback', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              rating: selectedRating,
+              message: message,
+              page: window.location.pathname
+            })
+          });
+          var data = await res.json();
+          if (data.success) {
+            fbForm.style.display = 'none';
+            fbSuccess.style.display = 'block';
+            setTimeout(function() { fbPanel.style.display = 'none'; fbForm.style.display = 'block'; fbSuccess.style.display = 'none'; submitBtn.disabled = false; submitBtn.textContent = 'Send'; }, 3000);
+          } else {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send';
+          }
+        } catch(err) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send';
+        }
+      });
+    </script>
+
+    <script>
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      
+      mobileMenuBtn?.addEventListener('click', () => {
+        mobileMenu?.classList.toggle('hidden');
+      });
+      
+      // Intersection Observer for fade-in animations
+      document.addEventListener('DOMContentLoaded', () => {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        });
+        
+        document.querySelectorAll('.animate-fadein').forEach(el => {
+          observer.observe(el);
+        });
+      });
+    </script>
+  </body>
+</html>

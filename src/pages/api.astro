@@ -1,0 +1,114 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="API Reference — NoMoreSlop"
+  description="Machine-readable JSON API for NoMoreSlop.com. Access tools, resources, and agent skills data without parsing HTML."
+>
+  <div class="max-w-4xl mx-auto px-6 py-16">
+
+    <div style="margin-bottom: 3rem;">
+      <p style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 0.75rem;">Developer API</p>
+      <h1 class="font-display" style="font-size: clamp(2.5rem, 6vw, 4rem); line-height: 1; margin-bottom: 1.5rem;">API REFERENCE</h1>
+      <p style="color: var(--text-secondary); font-size: 1.1rem; line-height: 1.7; max-width: 600px;">
+        All NoMoreSlop data is available as structured JSON. Built so AI agents and developers can query site content without scraping HTML.
+      </p>
+      <div style="margin-top: 1.5rem; padding: 1rem 1.25rem; background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 3px solid var(--accent); font-family: var(--font-mono); font-size: 0.9rem;">
+        Base URL: <span style="color: var(--accent);">https://api.nomoreslop.com</span>
+      </div>
+    </div>
+
+    <!-- Quick discovery links for agents -->
+    <div style="margin-bottom: 3rem; padding: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-subtle);">
+      <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 0.75rem;">Agent Discovery</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.8rem;">
+        <a href="/llms.txt" style="color: var(--text-secondary); text-decoration: underline;">/llms.txt</a>
+        <a href="/.well-known/api-catalog" style="color: var(--text-secondary); text-decoration: underline;">/.well-known/api-catalog</a>
+        <a href="https://api.nomoreslop.com/api" target="_blank" style="color: var(--text-secondary); text-decoration: underline;">GET /api (index)</a>
+      </div>
+    </div>
+
+    <!-- Endpoints -->
+    <div style="display: flex; flex-direction: column; gap: 2rem;">
+
+      <!-- /api -->
+      <div style="border: 1px solid var(--border-subtle); padding: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 0.2rem 0.5rem; background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid var(--accent);">GET</span>
+          <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">/api</code>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">API index. Returns all available endpoints. Start here if you're an agent discovering what's available.</p>
+        <a href="https://api.nomoreslop.com/api" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);">Try it →</a>
+      </div>
+
+      <!-- /api/tools -->
+      <div style="border: 1px solid var(--border-subtle); padding: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 0.2rem 0.5rem; background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid var(--accent);">GET</span>
+          <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">/api/tools</code>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Code quality and static analysis tools for AI-assisted development. Includes what each tool catches, what it misses, and platform support.</p>
+        <div style="margin-bottom: 1rem;">
+          <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.5rem;">Query params</p>
+          <code style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">?tag=php|javascript|typescript|css|security|github|dependencies|multi-language</code>
+        </div>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://api.nomoreslop.com/api/tools" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);">Try it →</a>
+          <a href="https://api.nomoreslop.com/api/tools?tag=php" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">?tag=php →</a>
+          <a href="https://api.nomoreslop.com/api/tools?tag=security" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-secondary);">?tag=security →</a>
+        </div>
+      </div>
+
+      <!-- /api/agentic-tools -->
+      <div style="border: 1px solid var(--border-subtle); padding: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 0.2rem 0.5rem; background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid var(--accent);">GET</span>
+          <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">/api/agentic-tools</code>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Software built from the ground up to work with AI agents — readable APIs, structured data, agent-friendly interfaces.</p>
+        <div style="margin-bottom: 1rem;">
+          <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.5rem;">Query params</p>
+          <code style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">?category=CMS+%26+Content|Notes+%26+Knowledge|Dev+Tools|APIs+%26+Integrations</code>
+        </div>
+        <a href="https://api.nomoreslop.com/api/agentic-tools" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);">Try it →</a>
+      </div>
+
+      <!-- /api/resources -->
+      <div style="border: 1px solid var(--border-subtle); padding: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 0.2rem 0.5rem; background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid var(--accent);">GET</span>
+          <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">/api/resources</code>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Curated resources for developers building with AI: coding tools, communities, newsletters, security references.</p>
+        <div style="margin-bottom: 1rem;">
+          <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.5rem;">Query params</p>
+          <code style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">?category=AI+Coding+Tools|Security+%26+Code+Quality|Learning+%26+Communities|News+%26+Newsletters|Web+Dev</code>
+        </div>
+        <a href="https://api.nomoreslop.com/api/resources" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);">Try it →</a>
+      </div>
+
+      <!-- /api/search -->
+      <div style="border: 1px solid var(--border-subtle); padding: 1.5rem;">
+        <div style="display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 0.2rem 0.5rem; background: rgba(245,158,11,0.15); color: var(--accent); border: 1px solid var(--accent);">GET</span>
+          <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--text-primary);">/api/search</code>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">Search ClawHub for agent skills — reusable SKILL.md files that teach AI assistants domain-specific knowledge.</p>
+        <div style="margin-bottom: 1rem;">
+          <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 0.5rem;">Query params</p>
+          <code style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-secondary);">?q=wordpress (required) &amp;limit=20 (optional, max 50)</code>
+        </div>
+        <a href="https://api.nomoreslop.com/api/search?q=wordpress" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent);">Try it (q=wordpress) →</a>
+      </div>
+
+    </div>
+
+    <!-- Response format note -->
+    <div style="margin-top: 3rem; padding: 1.25rem; background: var(--bg-card); border: 1px solid var(--border-subtle);">
+      <p style="font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); margin-bottom: 0.75rem;">Response Format</p>
+      <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">All endpoints return JSON. List endpoints include a <code style="font-family: var(--font-mono); font-size: 0.85em; color: var(--text-primary);">description</code>, <code style="font-family: var(--font-mono); font-size: 0.85em; color: var(--text-primary);">total</code> count, active <code style="font-family: var(--font-mono); font-size: 0.85em; color: var(--text-primary);">filters</code>, available filter values, and the data array. No authentication required. No rate limiting currently enforced.</p>
+    </div>
+
+  </div>
+</Layout>

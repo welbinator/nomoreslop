@@ -1,0 +1,307 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { resources } from '../data/resources';
+
+const resourcesJSON = JSON.stringify(resources);
+const categories = Array.from(new Set(resources.map(r => r.category)));
+---
+
+<Layout 
+  title="Resources — NoMoreSlop" 
+  description="Curated tools, communities, and reading material for developers building with AI. Updated as we find things worth adding."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <p class="section-label">// RESOURCES</p>
+    <h1 class="mb-8">Tools and resources for developers building with AI.</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7; max-width: 52rem;">
+      A curated list of tools, communities, and reading material worth bookmarking. Updated as we find things worth adding.
+    </p>
+
+    <!-- Search Bar -->
+    <div class="mb-8">
+      <input 
+        type="text" 
+        id="resource-search" 
+        placeholder="Search resources — e.g. security, newsletters, agents..."
+        class="search-input"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="flex gap-2 mt-4 flex-wrap">
+        {categories.map(category => (
+          <button data-category={category} class="filter-chip">{category}</button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="resources-container">
+      {categories.map(category => (
+        <div class="category-section" data-category-section={category}>
+          <p class="section-label mb-6">// {category.toUpperCase()}</p>
+          <div class="resources-grid mb-12" data-category-grid={category}></div>
+        </div>
+      ))}
+    </div>
+
+    <!-- No results message -->
+    <div id="no-results" style="display: none;">
+      <p class="no-results">No resources match this query.</p>
+    </div>
+  </section>
+
+  <!-- Resource Detail Modal -->
+  <div id="resource-detail-modal" style="display:none; position:fixed; inset:0; z-index:300; align-items:center; justify-content:center; padding:24px;">
+    <button id="resource-detail-backdrop" aria-label="Close" style="position:absolute; inset:0; background:rgba(0,0,0,0.7); cursor:pointer; border:none; width:100%; height:100%;"></button>
+    <div style="position:relative; z-index:301; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); max-width:560px; width:100%; max-height:85vh; overflow-y:auto; padding:40px;">
+      <button id="resource-detail-close" aria-label="Close" style="position:absolute; top:16px; right:20px; background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--text-secondary); line-height:1;">✕</button>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+        <span id="rd-badge" class="badge"></span>
+        <span id="rd-category" class="badge" style="border-color:var(--border-subtle); color:var(--text-secondary);"></span>
+      </div>
+      <h2 id="rd-name" style="font-family:var(--font-display); font-size:2.5rem; color:var(--text-primary); line-height:1; margin-bottom:20px; letter-spacing:0.02em;"></h2>
+      <p id="rd-description" style="color:var(--text-secondary); line-height:1.7; margin-bottom:32px; font-size:1rem;"></p>
+      <a id="rd-link" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:8px; text-decoration:none;">Visit Site →</a>
+    </div>
+  </div>
+
+  <style is:global>
+    .search-input {
+      width: 100%;
+      padding: 1rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-secondary); opacity: 0.6; }
+
+    .filter-chip {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-chip.active { background: var(--accent); color: var(--bg-primary); border-color: var(--accent); }
+
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .resource-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid transparent;
+      padding: 2rem;
+      transition: border-color 0.2s, border-left-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .resource-card:hover { border-color: var(--border-subtle); border-left-color: var(--accent); }
+
+    .resource-name-btn:hover .resource-name { color: var(--accent); }
+
+    .resource-name {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .resource-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.2rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: 1px solid;
+    }
+    .badge-free { border-color: #10b981; color: #10b981; }
+    .badge-paid { border-color: var(--text-secondary); color: var(--text-secondary); }
+
+    .resource-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .resource-footer {
+      display: flex;
+      justify-content: flex-end;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
+    }
+    .resource-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .resource-link:hover { color: var(--accent); }
+
+    .no-results {
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      padding: 2rem;
+      text-align: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .category-section {
+      margin-bottom: 3rem;
+    }
+  </style>
+
+  <script define:vars={{ resourcesJSON }}>
+    const RESOURCES = JSON.parse(resourcesJSON);
+    let searchTimeout = null;
+    let currentQuery = '';
+    let activeCategory = null;
+
+    const searchInput = document.getElementById('resource-search');
+    const categorySections = document.querySelectorAll('[data-category-section]');
+    const noResults = document.getElementById('no-results');
+
+    function renderResourceCard(resource) {
+      const badgeClass = resource.free ? 'badge-free' : 'badge-paid';
+      const badgeText = resource.free ? 'FREE' : 'PAID';
+      const encoded = encodeURIComponent(JSON.stringify(resource));
+      
+      return '<article class="resource-card animate-fadein">'
+        + '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">'
+        + '<button class="resource-name-btn" onclick="openResourceDetail(\'' + encoded + '\')" style="background:none;border:none;padding:0;cursor:pointer;text-align:left;"><h2 class="resource-name" style="pointer-events:none;">' + resource.name + '</h2></button>'
+        + '<a href="' + resource.url + '" target="_blank" rel="noopener noreferrer" class="resource-link" style="white-space:nowrap; margin-top:4px;">Visit &rarr;</a>'
+        + '</div>'
+        + '<div class="resource-meta"><span class="badge ' + badgeClass + '">' + badgeText + '</span></div>'
+        + '<p class="resource-description">' + resource.description + '</p>'
+        + '</article>';
+    }
+
+    function filterResources(query, category) {
+      const q = query.toLowerCase();
+      return RESOURCES.filter(r => {
+        const matchesQuery = !q ||
+          r.name.toLowerCase().includes(q) ||
+          r.description.toLowerCase().includes(q) ||
+          r.category.toLowerCase().includes(q);
+        const matchesCategory = !category || r.category === category;
+        return matchesQuery && matchesCategory;
+      });
+    }
+
+    function renderResults(query, category) {
+      const filtered = filterResources(query, category);
+      const hasResults = filtered.length > 0;
+
+      // Group by category
+      const grouped = {};
+      filtered.forEach(r => {
+        if (!grouped[r.category]) grouped[r.category] = [];
+        grouped[r.category].push(r);
+      });
+
+      // Render each category section
+      categorySections.forEach(section => {
+        const cat = section.dataset.categorySection;
+        const grid = section.querySelector('[data-category-grid]');
+        const items = grouped[cat] || [];
+        
+        if (items.length > 0) {
+          section.style.display = 'block';
+          grid.innerHTML = items.map(renderResourceCard).join('');
+          // Trigger fade-in
+          grid.querySelectorAll('.animate-fadein').forEach(function(el) {
+            el.classList.add('visible');
+          });
+        } else {
+          section.style.display = 'none';
+        }
+      });
+
+      // Show/hide no results message
+      if (hasResults) {
+        noResults.style.display = 'none';
+      } else {
+        noResults.style.display = 'block';
+      }
+    }
+
+    searchInput.addEventListener('input', function(e) {
+      clearTimeout(searchTimeout);
+      currentQuery = e.target.value.trim();
+      searchTimeout = setTimeout(function() { renderResults(currentQuery, activeCategory); }, 300);
+    });
+
+    document.querySelectorAll('[data-category]').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var cat = btn.dataset.category;
+        if (activeCategory === cat) {
+          activeCategory = null;
+          btn.classList.remove('active');
+        } else {
+          document.querySelectorAll('[data-category]').forEach(function(b) { b.classList.remove('active'); });
+          activeCategory = cat;
+          btn.classList.add('active');
+        }
+        renderResults(currentQuery, activeCategory);
+      });
+    });
+
+    // Initial render
+    renderResults('', null);
+  </script>
+
+  <script>
+    var rdModal = document.getElementById('resource-detail-modal');
+    window.openResourceDetail = function(encoded) {
+      var r = JSON.parse(decodeURIComponent(encoded));
+      document.getElementById('rd-name').textContent = r.name;
+      document.getElementById('rd-description').textContent = r.description;
+      document.getElementById('rd-category').textContent = r.category;
+      var badge = document.getElementById('rd-badge');
+      badge.textContent = r.free ? 'FREE' : 'PAID';
+      badge.className = 'badge ' + (r.free ? 'badge-free' : 'badge-paid');
+      var link = document.getElementById('rd-link');
+      link.href = r.url;
+      link.textContent = r.url.replace('https://', '').replace('http://', '') + ' →';
+      rdModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+    function closeRdModal() {
+      rdModal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+    document.getElementById('resource-detail-close').addEventListener('click', closeRdModal);
+    document.getElementById('resource-detail-backdrop').addEventListener('click', closeRdModal);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeRdModal();
+    });
+  </script>
+</Layout>

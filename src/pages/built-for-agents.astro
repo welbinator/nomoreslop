@@ -1,0 +1,224 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { agenticTools } from '../data/agenticTools';
+
+// Group by category
+const categories = {
+  'CMS & Content': agenticTools.filter(t => t.category === 'CMS & Content'),
+  'Notes & Knowledge': agenticTools.filter(t => t.category === 'Notes & Knowledge'),
+  'Dev Tools': agenticTools.filter(t => t.category === 'Dev Tools'),
+  'APIs & Integrations': agenticTools.filter(t => t.category === 'APIs & Integrations')
+};
+---
+
+<Layout 
+  title="Built for Agents — NoMoreSlop" 
+  description="Software built from the ground up to work with AI agents — readable APIs, structured data, agent-friendly interfaces."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <p class="section-label">// BUILT FOR AGENTS</p>
+    <h1 class="mb-8">Software that actually works with AI agents.</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7; max-width: 52rem;">
+      Most software claims to be AI-powered. This is a different list. These are tools built from the ground up to work <em>with</em> AI agents — readable APIs, structured data, agent-friendly interfaces. The kind of software your AI can actually use.
+    </p>
+
+    {Object.entries(categories).map(([category, tools]) => {
+      if (tools.length === 0) return null;
+      
+      return (
+        <div class="mb-16">
+          <p class="section-label">// {category.toUpperCase()}</p>
+          <div class="tools-grid">
+            {tools.map(tool => (
+              <article class="skill-card animate-fadein">
+                <h2 class="tool-name">{tool.name}</h2>
+                
+                <div class="tool-meta">
+                  <span class="badge badge-category">{tool.category}</span>
+                  {tool.free && <span class="badge badge-free">FREE</span>}
+                  {tool.openSource && <span class="badge badge-opensource">OPEN SOURCE</span>}
+                </div>
+
+                <p class="tool-description">{tool.description}</p>
+
+                <div class="tool-footer">
+                  <a href={tool.url} target="_blank" rel="noopener noreferrer" class="tool-link">
+                    Visit &rarr;
+                  </a>
+                  {tool.sourceUrl && tool.sourceUrl !== tool.url && (
+                    <a href={tool.sourceUrl} target="_blank" rel="noopener noreferrer" class="tool-link">
+                      Source &rarr;
+                    </a>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      );
+    })}
+
+    <!-- Bottom CTA -->
+    <div class="mt-16 p-8 text-center" style="background: var(--bg-card); border: 1px solid var(--border-subtle);">
+      <p class="font-display text-3xl mb-3" style="color: var(--text-primary);">BUILDING AGENT-FIRST SOFTWARE?</p>
+      <p class="mb-6" style="color: var(--text-secondary);">Submit your tool and we&apos;ll review it for inclusion.</p>
+      <button id="submit-tool-btn" class="btn btn-primary">Submit a Tool</button>
+    </div>
+
+    <!-- Submit Modal -->
+    <div id="tool-modal" style="display:none; position:fixed; inset:0; z-index:200; align-items:center; justify-content:center; padding:1rem;">
+      <!-- Backdrop -->
+      <button id="modal-backdrop" aria-label="Close" style="position:absolute; inset:0; background:rgba(0,0,0,0.7); cursor:default; border:none;"></button>
+      <!-- Modal box -->
+      <div style="position:relative; z-index:201; background:var(--bg-card); border:1px solid var(--border-subtle); border-left:3px solid var(--accent); padding:2.5rem; max-width:480px; width:100%;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:2rem;">
+          <h2 class="font-display text-3xl">SUBMIT A TOOL</h2>
+          <button id="modal-close" aria-label="Close" style="background:none; border:none; color:var(--text-secondary); font-size:1.5rem; cursor:pointer; line-height:1; padding:0;">&times;</button>
+        </div>
+        <form id="tool-form">
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Tool Name *</label>
+            <input type="text" id="tool-name-input" required placeholder="e.g. OpenClaw" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Tool URL *</label>
+            <input type="url" id="tool-url" required placeholder="https://example.com" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <div style="margin-bottom:1.25rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Why is it agent-friendly?</label>
+            <textarea id="tool-reason" rows="3" placeholder="Clean API? Structured data? Designed for programmatic access?" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; resize:vertical; box-sizing:border-box;"></textarea>
+          </div>
+          <div style="margin-bottom:2rem;">
+            <label style="display:block; font-family:var(--font-mono); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--accent); margin-bottom:0.5rem;">Your email (optional)</label>
+            <input type="email" id="tool-email" placeholder="you@example.com" style="width:100%; padding:0.75rem 1rem; font-family:var(--font-mono); font-size:0.875rem; background:var(--bg-secondary); border:1px solid var(--border-subtle); color:var(--text-primary); outline:none; box-sizing:border-box;" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">SEND SUBMISSION</button>
+        </form>
+        <div id="tool-form-success" style="display:none; text-align:center; padding:2rem 0;">
+          <p class="font-display text-2xl mb-3" style="color:var(--accent);">SUBMITTED</p>
+          <p style="color:var(--text-secondary); font-family:var(--font-mono); font-size:0.875rem;">Thanks — we&apos;ll review it and be in touch if it makes the cut.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <style is:global>
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 3px solid transparent;
+      padding: 2rem;
+      transition: border-color 0.2s, border-left-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .skill-card:hover { 
+      border-color: var(--border-subtle); 
+      border-left-color: var(--accent); 
+    }
+
+    .tool-name {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .tool-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 0.2rem 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      border: 1px solid;
+    }
+    .badge-category { 
+      border-color: var(--border-subtle); 
+      color: var(--text-secondary); 
+    }
+    .badge-free { 
+      border-color: var(--accent); 
+      color: var(--accent); 
+    }
+    .badge-opensource { 
+      border-color: var(--border-subtle); 
+      color: var(--text-secondary); 
+    }
+
+    .tool-description {
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .tool-footer {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: auto;
+    }
+    .tool-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .tool-link:hover { color: var(--accent); }
+  </style>
+
+  <script>
+    var modal = document.getElementById('tool-modal');
+    var form = document.getElementById('tool-form');
+    var success = document.getElementById('tool-form-success');
+
+    function openModal() {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+      modal.style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('submit-tool-btn').addEventListener('click', openModal);
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeModal(); }
+    });
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var name = document.getElementById('tool-name-input').value;
+      var url = document.getElementById('tool-url').value;
+      var reason = document.getElementById('tool-reason').value;
+      var email = document.getElementById('tool-email').value;
+      var body = 'Tool Name: ' + name + '\n\nTool URL: ' + url + '\n\nWhy agent-friendly: ' + reason + (email ? '\n\nFrom: ' + email : '');
+      window.location.href = 'mailto:hello@nomoreslop.com?subject=Tool Submission: ' + encodeURIComponent(name) + '&body=' + encodeURIComponent(body);
+      form.style.display = 'none';
+      success.style.display = 'block';
+    });
+  </script>
+</Layout>

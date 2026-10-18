@@ -1,0 +1,35 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const posts = [
+  {
+    title: "How My AI Slop Got An A- Rating",
+    date: "April 21, 2026",
+    excerpt: "A professional review of a vibe-coded WordPress plugin found three serious issues that every automated scanner missed.",
+    slug: "form-handler-wp-security-review"
+  }
+];
+---
+
+<Layout 
+  title="The Slop Report — NoMoreSlop" 
+  description="Case studies of AI-generated code reviews. Real problems, real fixes, real lessons."
+>
+  <section class="max-w-5xl mx-auto px-6 py-16">
+    <h1 class="mb-6">The Slop Report</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7;">Real stories of AI-generated code that had real problems. What was found. What was fixed. What we learned.</p>
+
+    <!-- Blog Posts - Editorial style cards -->
+    <div class="space-y-8">
+      {posts.map((post, index) => (
+        <article class="card animate-fadein" style={`transition-delay: ${index * 0.05}s;`}>
+          <a href={`/blog/${post.slug}`}>
+            <h2 class="font-display text-3xl mb-3 hover:text-accent transition-colors">{post.title}</h2>
+            <time style="color: var(--text-secondary); font-size: 0.875rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em;">{post.date}</time>
+            <p class="mt-4" style="color: var(--text-secondary); line-height: 1.7;">{post.excerpt}</p>
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+</Layout>

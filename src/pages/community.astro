@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { communityItems } from '../data/community';
+
+const typeLabels: Record<string, string> = {
+  video: 'VIDEO',
+  article: 'ARTICLE',
+  website: 'WEBSITE',
+  podcast: 'PODCAST',
+  tool: 'TOOL',
+};
+
+const typeColors: Record<string, string> = {
+  video: '#ef4444',
+  article: '#3b82f6',
+  website: '#10b981',
+  podcast: '#a855f7',
+  tool: '#f59e0b',
+};
+---
+
+<Layout
+  title="From The Community — NoMoreSlop"
+  description="Videos, articles, websites, and more from the community — content worth sharing about building with AI without shipping slop."
+>
+  <section class="max-w-6xl mx-auto px-6 py-16">
+    <p class="section-label">// FROM THE COMMUNITY</p>
+    <h1 class="mb-8">Content worth sharing.</h1>
+    <p class="text-xl mb-16" style="color: var(--text-secondary); line-height: 1.7; max-width: 52rem;">
+      Curated resources that are actually worth your time if you care about building with AI without shipping slop.
+    </p>
+
+    <div class="community-grid">
+      {communityItems.map((item) => (
+            <div class="community-card" data-type={item.type}>
+          <div class="community-card-inner">
+            <div class="community-card-header">
+              <span
+                class="community-type-badge"
+                style={`background: ${typeColors[item.type]}22; color: ${typeColors[item.type]}; border-color: ${typeColors[item.type]}44;`}
+              >
+                {typeLabels[item.type]}
+              </span>
+              {item.date && (
+                <span class="community-date">
+                  {new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                </span>
+              )}
+            </div>
+
+            <h2 class="community-title">{item.title}</h2>
+            <p class="community-desc">{item.description}</p>
+
+            {item.author && (
+              <p class="community-author">
+                {item.authorUrl
+                  ? <span>— <a href={item.authorUrl} target="_blank" rel="noopener noreferrer" class="community-author-link">{item.author}</a></span>
+                  : <span>— {item.author}</span>
+                }
+              </p>
+            )}
+
+            <div class="community-cta">
+              <a href={item.url} target="_blank" rel="noopener noreferrer" class="community-cta-link">
+                {item.type === 'video' ? 'Watch →' : item.type === 'podcast' ? 'Listen →' : 'Read →'}
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+</Layout>
+
+<style is:global>
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .community-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--accent);
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: pointer;
+  }
+
+  .community-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .community-card-inner {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+  }
+
+  .community-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .community-type-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border: 1px solid;
+    border-radius: 2px;
+  }
+
+  .community-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-left: auto;
+  }
+
+  .community-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .community-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+  }
+
+  .community-author {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .community-author-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .community-author-link:hover {
+    text-decoration: underline;
+  }
+
+  .community-cta {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-top: auto;
+  }
+
+  .community-cta-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .community-cta-link:hover {
+    text-decoration: underline;
+  }
+</style>
